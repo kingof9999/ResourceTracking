@@ -40,3 +40,10 @@
 {
 	text-align:right;
 }
+
+.paging{
+	color: #ffffff;
+	margin-left: 3px;
+	background-color: #8fc6ff;
+	border-radius: 4px;
+}

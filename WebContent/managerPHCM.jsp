@@ -4,6 +4,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -71,7 +73,7 @@
 			<span>List Public Holiday Calendars</span>
 		</div>
 		<div class="body-filter row">
-			<form action="/#" method="get">
+			<html:form action="/list-public-holiday" method="get">
 				<div class="qlnv-control">
 				<div class="row">
 				<div class="col-lg-2 top-item" style="margin-right: -103px;">
@@ -81,11 +83,13 @@
 						Country:
 					</span>
 				</div>
-				<div class="col-lg-2 top-item"><select name="option" class="form-control top-item">
-					<option value="0">Singapore</option>
-					<option value="1">Vietnam</option>
-					<option value="2">Japanese</option>
-				</select></div>
+				<div class="col-lg-2 top-item">
+					<html:select property="idCountry" styleClass="form-control top-item">
+						<option value="">-- Select Country --</option>
+						<html:optionsCollection name="publicHolidayForm" property="listCountry" 
+							label="nameCountry" value="idCountry" />
+					</html:select>
+				</div>
 				<div class="col-lg-2 top-item" style="margin-right: -130px;">
 					<span
 					class="form-control top-item"
@@ -93,16 +97,18 @@
 						Year:
 					</span>
 				</div>
-				<div class="col-lg-2 top-item"><select name="option" class="form-control top-item">
-					<option value="0">2010</option>
-					<option value="1">2011</option>
-					<option value="2">2012</option>
-				</select></div>
+				<div class="col-lg-2 top-item">
+					<html:select property="year" styleClass="form-control top-item">
+						<option value="">-- Select Year --</option>
+						<html:optionsCollection name="publicHolidayForm" property="listYear" 
+							label="year" value="year" />
+					</html:select>
+				</div>
 				<div class="col-lg-2 top-item"><input type="submit" name="submit"
 					class="btn btn-danger" value="Filter" /></div>
 				</div>
 				</div>
-			</form>
+			</html:form>
 			<div class="row">
 	                <div class="col-md-12">
 	                    <!-- Advanced Tables -->
@@ -118,6 +124,11 @@
 	                                        </tr>
 	                                    </thead>
 	                                    <tbody>
+	                                    	<tr>
+	                                    		<td colspan="3">
+	                                    			<bean:write name="publicHolidayForm" property="message"/>
+	                                    		</td>
+	                                    	</tr>
 	                                        <logic:iterate id="ph" name="publicHolidayForm" property="listPublicHoliday">
 	                                        	<tr>
 		                                        	<td><bean:write name="ph" property="nameCountry"/></td>
@@ -134,15 +145,19 @@
 	                                		<a href="addPHCM.jsp" style="margin-left: 20px;" class="btn btn-info">Add</a>
 		                                </div>
 		                                <div class="col-sm-7">
-			                                <ul class="pagination">
-			                                	<li><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 4px;"><< Previous Page</a></li>
-											    <li><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 4px;">1</a></li>
-											    <li class="active"><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #397ab7;border-radius: 4px;">2</a></li>
-											    <li><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 4px;">3</a></li>
-											    <li><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 4px;">4</a></li>
-											    <li><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 5px;">...</a></li>
-											    <li><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 5px;">5</a></li>
-											    <li><a href="#" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 5px;">Next Page >></a></li>
+			                                <ul class="pagination" style="margin-left: 25%;">
+												<bean:define id="currentPage" name="publicHolidayForm" property="currentPage"></bean:define>
+												<p id="activeCP" hidden>${currentPage}</p>
+									    		<c:if test="${currentPage != 1}">
+									    			<li><html:link style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 4px;" href="list-public-holiday.do?page=${currentPage-1}">« Previous Page</html:link></li>
+									            </c:if>
+									            <logic:iterate name="publicHolidayForm" property="listPage" id="pag">
+									            	<li class="${pag}"><html:link styleClass="${pag}" style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 4px;" href="list-public-holiday.do?page=${pag}" ><bean:write name="pag"/></html:link></li>
+									            </logic:iterate>
+									            <bean:define id="noOfPages" name="publicHolidayForm" property="noOfPages"></bean:define>
+									            <c:if test="${currentPage < noOfPages}">
+									                <li><html:link style="color: #ffffff;margin-left: 3px;background-color: #8fc6ff;border-radius: 4px;" href="list-public-holiday.do?page=${currentPage+1}">Next »​</html:link></li>
+									            </c:if>
 											</ul>
 		                                </div>
 	                                </div>
@@ -165,6 +180,11 @@
 </div>
 </body>
 </html>
+<script type="text/javascript">
+	var activeCP = $("#activeCP").text();
+	$("."+activeCP+"").addClass('active');
+	$("."+activeCP+"").css('background-color','#337ab7');
+</script>
 <!-- JS Merge table -->
 <script type="text/javascript">
 	$(document).ready(function () {
