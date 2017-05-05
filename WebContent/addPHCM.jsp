@@ -69,31 +69,32 @@
 			</div>
 			<div style="height: 400px;" class="body-filter row">
 				<div class="col-sm-12">
+					<span style="color: red;"><bean:write name="publicHolidayForm" property="message"/></span>
 					<div class="col-sm-12" style="border: groove; margin-top: 30px;">
-						<div style="margin-top: 10px;">
-							Country:
-							<select style="margin-left: 30px;">
-							  <option value="volvo">Singapore</option>
-							  <option value="saab">Japan</option>
-							  <option value="mercedes">VietNam</option>
-							  <option value="audi">Laos</option>
-							</select>
-						</div>
-						<div style="margin-top: 10px;">
-							Date of Public Holiday(dd/mm/yyyy):<br>
-							<div style="margin-left: 170px;" id="dateCheckBox">
-							
+						<html:form action="/addPublicHoliday" method="post">
+							<div style="margin-top: 10px;">
+								Country:
+								<html:select property="idCountry" style="margin-left: 30px;">
+									<html:optionsCollection name="publicHolidayForm" property="listCountry" 
+										label="nameCountry" value="idCountry" />
+								</html:select>
 							</div>
-							<div>
-								<a id="btnAddnew" href="#" style="margin: 10px 0 0 15px; padding-left: 86px;">Add more</a>
+							<div style="margin-top: 10px;">
+								Date of Public Holiday(dd/mm/yyyy):<br>
+								<div style="margin-left: 170px;" id="dateCheckBox">
+								
+								</div>
+								<div>
+									<a id="btnAddnew" href="#" style="margin: 10px 0 0 15px; padding-left: 86px;">Add more</a>
+								</div>
 							</div>
-						</div>
-						<div style="margin-left: 100px;">
-							<button class="btn btn-default" id="remove">Clear</button>
-							<button class="btn btn-info">Add</button>
-							<html:link styleClass="btn btn-danger" action="/list-public-holiday">Cancel</html:link>
-						</div>
-						<br>
+							<div style="margin-left: 100px;">
+								<button class="btn btn-default" id="remove">Clear</button>
+								<html:submit styleId="submit" styleClass="btn btn btn-info" property="submit" value="Add">Add</html:submit>
+								<html:link styleClass="btn btn-danger" action="/list-public-holiday">Cancel</html:link>
+							</div>
+							<br>
+						</html:form>
 					</div>
 				</div>
 				</div>
@@ -119,20 +120,14 @@
 		var iCnt = 0;
 		if (iCnt <= 19) {
 			iCnt = iCnt + 1;
-			/*$('#dateCheckBox').append('<div id=cb'+iCnt+'> ' +
-					'<input type=date style="margin: 10px 0 0 15px;" id=cb' + iCnt + ' ' +
-                    'value="Text Element ' + iCnt + '" />' +
-                    '<a href="#" onclick="deleteFunction('+"'"+'cb'+iCnt+"'"+')"><span style="margin-left: 10px 0 0 15px;"><i class="glyphicon glyphicon-remove icon-delete"></i></a></span></br></div>');
-			*/
 			
 			$('#dateCheckBox').append('<div id=cb'+iCnt+'> ' +
-					'<input type=date style="margin: 10px 0 0 15px;" id=cb' + iCnt + ' ' +
+					'<input name="publicHoliday" type=date style="margin: 10px 0 0 15px;" id=cb' + iCnt + ' ' +
                     'value="Text Element ' + iCnt + '" />' +
                     '<a href="#" onclick="deleteFunction('+"'"+'cb'+iCnt+"'"+')"><span style="margin-left: 10px 0 0 15px;"><i class="glyphicon glyphicon-remove icon-delete"></i></a></span></br></div>');
 		}
 	});
 </script>
-
 
 <!-- DATA TABLE SCRIPTS -->
     <script src="js/dataTables/jquery.dataTables.js"></script>

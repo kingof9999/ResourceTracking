@@ -126,7 +126,7 @@
 	                                    <tbody>
 	                                    	<tr>
 	                                    		<td colspan="3">
-	                                    			<bean:write name="publicHolidayForm" property="message"/>
+	                                    			<p style="color: red;"><bean:write name="publicHolidayForm" property="message"/></p>
 	                                    		</td>
 	                                    	</tr>
 	                                        <logic:iterate id="ph" name="publicHolidayForm" property="listPublicHoliday">
@@ -135,17 +135,20 @@
 		                                        	<td>
 		                                        		<bean:write name="ph" property="datePublicHoliday"/>
 		                                        	</td>
-		                                        	<td><a href="#"><i class="glyphicon glyphicon-remove icon-delete"></i></a></td>
+		                                        	<td>
+		                                        		<bean:define id="idph" name="ph" property="idPublicHoliday"></bean:define>
+		                                        		<html:link action="/deletePublicHoliday?idPublicHoliday=${idph}"><i class="glyphicon glyphicon-remove icon-delete"></i></html:link>
+		                                        	</td>
 		                                        </tr>
 	                                        </logic:iterate>
 	                                    </tbody>
 	                                </table>
 	                                <div class="col-sm-offset-2">
 	                                	<div class="col-sm-3">
-	                                		<a href="addPHCM.jsp" style="margin-left: 20px;" class="btn btn-info">Add</a>
+		                                	<html:link action="/addPublicHoliday" style="margin-left: 20px;" styleClass="btn btn-info">Add</html:link>
 		                                </div>
 		                                <div class="col-sm-7">
-			                                <ul class="pagination" style="margin-left: 25%;">
+			                                <ul class="pagination col-sm-12" style="margin-left: 20%;">
 												<bean:define id="currentPage" name="publicHolidayForm" property="currentPage"></bean:define>
 												<p id="activeCP" hidden>${currentPage}</p>
 									    		<c:if test="${currentPage != 1}">

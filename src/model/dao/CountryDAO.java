@@ -9,12 +9,32 @@ import java.util.ArrayList;
 import model.bean.Country;
 import model.bean.Year;
 
+/**
+ * CountryDAO
+ * 
+ * Version 1.0
+ * 
+ * Date: 03/05/2017
+ *
+ * Copyright
+ * 
+ * Modification Logs:
+ * DATE				AUTHOR			DECRIPTION
+ * -------------------------------------------
+ * 03/05/2017		TinLQ			Create
+ */
 public class CountryDAO {
 	DBConnection connect = new DBConnection();
 	Connection conn = connect.getConnect();
 	Statement stmt;
 	
-	public ArrayList<Country> getListCountry() {
+	/**
+	 * get data country for filter public holiday page
+	 * @return
+	 * @throws SQLException 
+	 */
+	public ArrayList<Country> getListCountry() throws SQLException {
+		//select data from table COUNTRY
 		String sql=	"SELECT ID_COUNTRY, NAME_COUNTRY FROM COUNTRY";
 		ResultSet rs = null;
 		try {
@@ -35,11 +55,19 @@ public class CountryDAO {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+		    rs.close();
 		}
 		return list;
 	}
-
-	public ArrayList<Year> getListYear() {
+	
+	/**
+	 * get data year for filter public holiday page
+	 * @return
+	 * @throws SQLException 
+	 */
+	public ArrayList<Year> getListYear() throws SQLException {
+		//select data from table PUBLIC_CALENDAR
 		String sql=	"SELECT TOP 2 YEAR(PUBLIC_HOLIDAY) as myYear"
 			+ " FROM PUBLIC_CALENDAR"
 			+ " WHERE DATEDIFF(year,GETDATE(),PUBLIC_HOLIDAY)<0"
@@ -63,8 +91,37 @@ public class CountryDAO {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+		    rs.close();
 		}
 		return list;
+	}
+
+	/**
+	 * get ID_COUNTRY from data and check
+	 * @return
+	 */
+	public boolean checkIdCountry(String idCountry) {
+		//select data from table PUBLIC_CALENDAR
+		String sql=	String.format("SELECT ID_COUNTRY FROM PUBLIC_CALENDAR WHERE ID_COUNTRY = '%s'", idCountry);
+		ResultSet rs = null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			while(rs.next()){
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+		    
+		}
+		return true;
 	}
 
 }
