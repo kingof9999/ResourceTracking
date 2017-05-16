@@ -29,8 +29,9 @@ public class PublicHolidayBO {
 	 * @param offset
 	 * @param noOfRecords
 	 * @return
+	 * @throws Exception 
 	 */
-	public ArrayList<PublicHoliday> getListPublicHoliday(int offset, int noOfRecords) throws SQLException {
+	public ArrayList<PublicHoliday> getListPublicHoliday(int offset, int noOfRecords) throws Exception {
 		return publicHolidayDAO.getListPublicHoliday(offset, noOfRecords);
 	}
 	
@@ -39,8 +40,9 @@ public class PublicHolidayBO {
 	 * @param idCountry
 	 * @param year
 	 * @return
+	 * @throws Exception 
 	 */
-	public ArrayList<PublicHoliday> getListPublicHoliday(String idCountry, String year) throws SQLException {
+	public ArrayList<PublicHoliday> getListPublicHoliday(String idCountry, String year) throws Exception {
 		return publicHolidayDAO.getListPublicHoliday(idCountry, year);
 	}
 	
@@ -48,9 +50,9 @@ public class PublicHolidayBO {
 	 * Processing business delete public holiday
 	 * @param idPublicHoliday
 	 * @return
-	 * @throws SQLException 
+	 * @throws Exception 
 	 */
-	public boolean deletePublicHoliday(String idPublicHoliday) throws SQLException{
+	public boolean deletePublicHoliday(String idPublicHoliday) throws Exception{
 		return publicHolidayDAO.deletePublicHoliday(idPublicHoliday);
 	}
 	
@@ -59,9 +61,10 @@ public class PublicHolidayBO {
 	 * @param publicHoliday
 	 * @param idCountry
 	 * @return
+	 * @throws SQLException 
 	 */
-	public void addPublicHoliday(String[] publicHoliday, String idCountry) {
-		publicHolidayDAO.addPublicHoliday(publicHoliday,idCountry);
+	public boolean addPublicHoliday(String[] publicHoliday, String idCountry) throws Exception {
+		return publicHolidayDAO.addPublicHoliday(publicHoliday,idCountry);
 	}
 
 }

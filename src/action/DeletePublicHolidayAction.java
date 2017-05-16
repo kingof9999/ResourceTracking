@@ -4,13 +4,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
+import common.CheckData;
+import common.CheckDbConnection;
 import form.PublicHolidayForm;
 import model.bo.PublicHolidayBO;
-import model.dao.DBConnection;
 
 /**
  * DeletePublicHolidayAction
@@ -27,6 +30,7 @@ import model.dao.DBConnection;
  * 05/05/2017		TinLQ			Create
  */
 public class DeletePublicHolidayAction extends Action{
+	
 	/**
 	 * Processed action for delete public holiday
 	 * @param mapping
@@ -38,23 +42,63 @@ public class DeletePublicHolidayAction extends Action{
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		//call form PublicHolidayForm
+		//call form PublicHolidayForm to use
 		PublicHolidayForm publicHolidayForm = (PublicHolidayForm) form;
-		//call class DBConnection
-		DBConnection dbConnection = new DBConnection();
+		//call class AcyionErrors to use
+		ActionErrors actionErrors = new ActionErrors();
 		//check database connection
-		if(dbConnection.getConnect() == null){
-			publicHolidayForm.setMessage("Database connection error.");
+		if(CheckDbConnection.checkConnect() == false){
+			//add message error
+			actionErrors.add("dbError", new ActionMessage("error.db.connectDatabase"));
+			saveErrors(request, actionErrors);
+			//go to error page
 			return mapping.findForward("loi");
 		}else{
-			//call class PublicHolidayBO
-			PublicHolidayBO publicHolidayBO = new PublicHolidayBO();
+			//call class PublicHolidayBO to use
+			PublicHolidayBO publicHolidayBO;
+			publicHolidayBO = new PublicHolidayBO();
 			String idPublicHoliday = publicHolidayForm.getIdPublicHoliday();
-			//Performing and check delete data
-			if(publicHolidayBO.deletePublicHoliday(idPublicHoliday) == false){
-				publicHolidayForm.setMessage("The calendars of selected country can be removed after two years created.");
+			Boolean deleteIdPublicHoliday = false;
+			Boolean checkIdPublicHoliday = false;
+			//try catch to get message from throw Exception
+			try {
+				//check idPublicHoliday have in database
+				checkIdPublicHoliday = CheckData.checkPublicHoliday(idPublicHoliday);
+			} catch (Exception e) {
+				//set message and return error page
+				actionErrors.add("dbError", new ActionMessage("error.db.sqlQuery"));
+				saveErrors(request, actionErrors);
+				publicHolidayForm.setMessage(e.getMessage());
+				return mapping.findForward("loi");
 			}
-			return mapping.findForward("thanhCong");
+			//check return checkPublicHoliday
+			if(checkIdPublicHoliday == true){
+				//try catch to get message from throw Exception
+				try {
+					deleteIdPublicHoliday = publicHolidayBO.deletePublicHoliday(idPublicHoliday);
+				} catch (Exception e) {
+					//set message and return error page
+					actionErrors.add("dbError", new ActionMessage("error.db.sqlQuery"));
+					saveErrors(request, actionErrors);
+					publicHolidayForm.setMessage(e.getMessage());
+					return mapping.findForward("loi");
+				}
+				
+				//Performing and check delete data
+				if(deleteIdPublicHoliday == false){
+					//add message error
+					actionErrors.add("deleteError", new ActionMessage("error.delete.deletePublicHoliday"));
+					saveErrors(request, actionErrors);
+				}
+				//return to list page
+				return mapping.findForward("thanhCong");
+			}else{
+				//add message error
+				actionErrors.add("deleteError", new ActionMessage("error.deelte.deleteAlreadyPublicHoliday"));
+				saveErrors(request, actionErrors);
+				//return to list page
+				return mapping.findForward("thanhCong");
+			}
 		}
 	}
 	

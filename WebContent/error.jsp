@@ -1,3 +1,17 @@
+<!-- 
+	* error.jsp
+	*
+	* version 1.0
+	*
+	* Date: 07/04/2017
+ 	*
+ 	* Copyright
+ 	* 
+ 	* Modification Logs:
+ 	* DATE				AUTHOR			DECRIPTION
+ 	* -------------------------------------------
+ 	* 07/05/2017		TinLQ			Create
+ -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
@@ -40,11 +54,44 @@
 <title>Error</title>
 </head>
 <body onload="setTimeout('autoClick();', 3000);">
-	<center>
-		<span>Error</span>
-	</center>
-	<center>
-		<bean:write name="publicHolidayForm" property="message"/>
-	</center>
+	<div class="container">
+		<div class="header">
+			<div class="header-top"></div>
+			<div class="header-bottom"></div>
+			<nav class="navbar navbar-default center-block">
+				<div class="container-fluid">
+					<div class="navbar-header">
+	  					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-collapse" aria-expanded="false">
+					        <span class="sr-only">Toggle navigation</span>
+					        <span class="icon-bar"></span>
+					        <span class="icon-bar"></span>
+					        <span class="icon-bar"></span>
+	  					</button>
+					</div>
+	
+					<div class="collapse navbar-collapse" id="menu-collapse">
+						<ul class="nav navbar-nav">
+							<li><a href="#">My Profile</a></li>
+							<li><a href="#">Account Course</a></li>
+							<li><a href="#">Account</a></li>
+							<li><a href="#">Account Certificate</a></li>
+							<li><a href="#">Language Score</a></li>
+							<li><a href="#">Report</a></li>
+							<li><a href="#">Security</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<div class="body">
+			<center>
+				<span>Error :</span>
+			</center>
+			<center>
+				<html:errors property="dbError"/><br>
+				<bean:write name="publicHolidayForm" property="message"/>
+			</center>
+		</div>
+	</div>
 </body>
 </html>

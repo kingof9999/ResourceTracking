@@ -21,27 +21,40 @@ import java.sql.SQLException;
 public class DBConnection {
 	/**
 	 * connect to database
-	 * @return
+	 * @return connection
 	 */
-	public Connection getConnect(){
+	public static Connection getConnect(){
+		// url to connect database
 		String url = "jdbc:sqlserver://localhost:1433;databaseName=ResourceTracking";
+		//user name to connect database
 		String userName = "sa";
+		//password to connect database
 		String password = "abc@1234";
 		Connection connection = null;
-		
+		//start connect to database
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			connection = DriverManager.getConnection(url, userName, password);
-			System.out.println("Database connection success.");
 		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Database connection error.");
+			;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.out.println("Database connection error.");
+			;
 		}finally {
-
+			;
 		}
+		//return connection
 		return connection;
+	}
+	
+	/**
+	 * disConnect(): close connection with database
+	 */
+	public static void disConnect() {
+		try {
+			if (getConnect() != null)
+				getConnect().close();
+		} catch (SQLException e) {
+			;
+		}
 	}
 }

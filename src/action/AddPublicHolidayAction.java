@@ -6,15 +6,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
+import common.CheckDbConnection;
 import form.PublicHolidayForm;
 import model.bean.Country;
 import model.bo.CountryBO;
 import model.bo.PublicHolidayBO;
-import model.dao.DBConnection;
 
 /**
  * AddPublicHolidayAction
@@ -31,6 +33,9 @@ import model.dao.DBConnection;
  * 05/05/2017		TinLQ			Create
  */
 public class AddPublicHolidayAction extends Action{
+	public static final String emptyValue = "";
+	public static final String nullValue = null;
+	public static final String[] nullArrayValue = null;
 	
 	/**
 	 * Processed action for add public holiday
@@ -45,15 +50,19 @@ public class AddPublicHolidayAction extends Action{
 			HttpServletResponse response) throws Exception {
 		//use form PublicHolidayForm
 		PublicHolidayForm publicHolidayForm = (PublicHolidayForm) form;
-		//call class DBConnection
-		DBConnection dbConnection = new DBConnection();
+		//call class AcyionErrors to use
+		ActionErrors actionErrors = new ActionErrors();
 		//check database connection
-		if(dbConnection.getConnect() == null){
-			publicHolidayForm.setMessage("Database connection error.");
+		if(CheckDbConnection.checkConnect() == false){
+			//add message error
+			actionErrors.add("dbError", new ActionMessage("error.db.connectDatabase"));
+			saveErrors(request, actionErrors);
+			//return error page
 			return mapping.findForward("loi");
 		}else{
 			//get list Country
-			CountryBO countryBO = new CountryBO();
+			CountryBO countryBO;
+			countryBO = new CountryBO();
 			ArrayList<Country> listCountry = countryBO.getListCountry();
 			publicHolidayForm.setListCountry(listCountry);
 			
@@ -62,29 +71,57 @@ public class AddPublicHolidayAction extends Action{
 				String[] publicHoliday = publicHolidayForm.getPublicHoliday();
 				String idCountry = publicHolidayForm.getIdCountry();
 				//check null publicHoliday
-				if(publicHoliday == null){
-					publicHolidayForm.setMessage("You must add some holiday.");
+				if(publicHoliday == nullArrayValue){
+					//add error message
+					actionErrors.add("addNullError", new ActionMessage("error.add.nullHoliday"));
+					saveErrors(request, actionErrors);
+					//return to add screen
 					return mapping.findForward("addPublicHoloday");
 				}
 				//check type publicHoliday is Empty
 				for(String s:publicHoliday){
-					if(s.isEmpty() || s == null){
-						publicHolidayForm.setMessage("Holiday must be a Date type.");
+					if(s.isEmpty() || s == nullValue){
+						//add error message
+						actionErrors.add("addTypeError", new ActionMessage("error.add.wrongTypeHoliday"));
+						saveErrors(request, actionErrors);
+						//return to add screen
 						return mapping.findForward("addPublicHoloday");
 					}
 				}
 				//check idCountry is already exist?
 				if(countryBO.checkIdCountry(idCountry) == true){
-					PublicHolidayBO publicHolidayBO = new PublicHolidayBO();
-					publicHolidayBO.addPublicHoliday(publicHoliday,idCountry);
-					//set idCountry == this idCountry
-					publicHolidayForm.setIdCountry(idCountry);
-					//set year = ""
-					publicHolidayForm.setYear("");
-					//return to list
-					return mapping.findForward("thanhCong");
+					PublicHolidayBO publicHolidayBO;
+					publicHolidayBO = new PublicHolidayBO();
+					Boolean checkDatePublicHoliday = false;
+					//try catch to get message from throw Exception
+					try {
+						checkDatePublicHoliday = publicHolidayBO.addPublicHoliday(publicHoliday,idCountry);
+					} catch (Exception e) {
+						//add error message
+						actionErrors.add("addTypeError", new ActionMessage("error.add.wrongTypeHoliday"));
+						saveErrors(request, actionErrors);
+						//return to add screen
+						return mapping.findForward("addPublicHoloday");
+					}
+					//check if exist date
+					if(checkDatePublicHoliday == true){
+						//set idCountry == this idCountry
+						publicHolidayForm.setIdCountry(idCountry);
+						//set year = ""
+						publicHolidayForm.setYear(emptyValue);
+						//return to list
+						return mapping.findForward("thanhCong");
+					}else{
+						//add error message
+						actionErrors.add("addExistDateError", new ActionMessage("error.add.existDateHoliday"));
+						saveErrors(request, actionErrors);
+						//return to add screen
+						return mapping.findForward("addPublicHoloday");
+					}
 				}else{
-					publicHolidayForm.setMessage("The country exists in the system. Please enter a new country or use update functionality to update the public holiday date.");
+					//set error if country exist
+					actionErrors.add("addCountryExistError", new ActionMessage("error.add.existCountry"));
+					saveErrors(request, actionErrors);
 					//return to page addPHCM.jsp
 					return mapping.findForward("addPublicHoloday");
 				}

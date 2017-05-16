@@ -1,3 +1,17 @@
+<!-- 
+	* managerPHCM.jsp
+	*
+	* version 1.4
+	*
+	* Date: 26/04/2017
+ 	*
+ 	* Copyright
+ 	* 
+ 	* Modification Logs:
+ 	* DATE				AUTHOR			DECRIPTION
+ 	* -------------------------------------------
+ 	* 08/05/2017		TinLQ			Create
+ -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
@@ -20,7 +34,6 @@
 	rel="stylesheet">
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/myStyle.css" />
-<script src="js/jquery.min.js"></script>
 
 <!-- dataTable -->
 <script
@@ -35,6 +48,26 @@
 	src="https://cdn.datatables.net/rowgroup/1.0.0/js/dataTables.rowGroup.min.js"></script>
 </head>
 <body>
+	<!-- reload list  -->
+	<script type="text/javascript">
+		function myFunction() {
+			setTimeout(function() {
+				window.location.href = './list-public-holiday.do'
+			}, 3000);
+		}
+	</script>
+	<div class="modal fade" id="popUpMessage" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">
+						<bean:write name="publicHolidayForm" property="message" />
+					</h4>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="container">
 	<div class="header">
 		<div class="header-top"></div>
@@ -84,10 +117,10 @@
 					</span>
 				</div>
 				<div class="col-lg-2 top-item">
-					<html:select property="idCountry" styleClass="form-control top-item">
+					<html:select property="idCountry" styleClass="form-control top-item" style="background-color: white;">
 						<option value="">-- Select Country --</option>
 						<html:optionsCollection name="publicHolidayForm" property="listCountry" 
-							label="nameCountry" value="idCountry" />
+							label="nameCountry" value="idCountry"/>
 					</html:select>
 				</div>
 				<div class="col-lg-2 top-item" style="margin-right: -130px;">
@@ -98,53 +131,64 @@
 					</span>
 				</div>
 				<div class="col-lg-2 top-item">
-					<html:select property="year" styleClass="form-control top-item">
+					<html:select property="year" styleClass="form-control top-item" style="background-color: white;">
 						<option value="">-- Select Year --</option>
 						<html:optionsCollection name="publicHolidayForm" property="listYear" 
 							label="year" value="year" />
 					</html:select>
 				</div>
 				<div class="col-lg-2 top-item"><input type="submit" name="submit"
-					class="btn btn-danger" value="Filter" /></div>
+					class="btn btn-danger" value="Filter" style="background-color: #bdbdbd; border-color: #fff;"/></div>
 				</div>
 				</div>
 			</html:form>
 			<div class="row">
 	                <div class="col-md-12">
+	                	<logic:notEmpty name="publicHolidayForm" property="message">
+							<script type="text/javascript">
+								myFunction();
+								$('#popUpMessage').modal('show');
+							</script>
+						</logic:notEmpty>
 	                    <!-- Advanced Tables -->
 	                    <div class="panel panel-default">
 	                        <div class="body-filter panel-body">
 	                            <div class="body-filter table-responsive">
 	                                <table id="tblSample" cellpadding="2" cellspacing="2" style="width: 60%; margin-left: 20%; text-align: center;" class="table table-striped table-bordered">
 	                                    <thead class="headerTable">
-	                                        <tr>
-	                                            <th style="width: 45%">Country</th>
-	                                            <th>Date of Public Holiday</th>
-	                                            <th>Delete</th>
+	                                        <tr style="background-color: #bdbdbd;">
+	                                            <th style="width: 45%; text-align: center;">Country</th>
+	                                            <th style="text-align: center;">Date of Public Holiday</th>
+	                                            <th style="text-align: center;">Delete</th>
 	                                        </tr>
 	                                    </thead>
 	                                    <tbody>
 	                                    	<tr>
 	                                    		<td colspan="3">
-	                                    			<p style="color: red;"><bean:write name="publicHolidayForm" property="message"/></p>
+	                                    			<p style="color: red;">
+	                                    				<html:errors property="deleteError"/>
+	                                    				<html:errors property="nullListError"/>
+	                                    			</p>
 	                                    		</td>
 	                                    	</tr>
 	                                        <logic:iterate id="ph" name="publicHolidayForm" property="listPublicHoliday">
 	                                        	<tr>
-		                                        	<td><bean:write name="ph" property="nameCountry"/></td>
+		                                        	<td>
+		                                        		<a href="#"><bean:write name="ph" property="nameCountry"/></a>
+		                                        	</td>
 		                                        	<td>
 		                                        		<bean:write name="ph" property="datePublicHoliday"/>
 		                                        	</td>
 		                                        	<td>
 		                                        		<bean:define id="idph" name="ph" property="idPublicHoliday"></bean:define>
-		                                        		<html:link action="/deletePublicHoliday?idPublicHoliday=${idph}"><i class="glyphicon glyphicon-remove icon-delete"></i></html:link>
+		                                        		<html:link styleClass="delete" action="/deletePublicHoliday?idPublicHoliday=${idph}"><i class="glyphicon glyphicon-remove icon-delete"></i></html:link>
 		                                        	</td>
 		                                        </tr>
 	                                        </logic:iterate>
 	                                    </tbody>
 	                                </table>
 	                                <div class="col-sm-offset-2">
-	                                	<div class="col-sm-3">
+	                                	<div class="col-sm-3" style="margin-top: 21px;">
 		                                	<html:link action="/addPublicHoliday" style="margin-left: 20px;" styleClass="btn btn-info">Add</html:link>
 		                                </div>
 		                                <div class="col-sm-7">
@@ -182,7 +226,13 @@
 </div>
 </div>
 </body>
-</html>
+<!-- script -->
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript">
+	$(".delete").attr('data-toggle','tooltip');
+	$(".delete").attr('data-placement','bottom');
+	$(".delete").attr('title','Delete');
+</script>
 <script type="text/javascript">
 	var activeCP = $("#activeCP").text();
 	$("."+activeCP+"").addClass('active');
@@ -224,3 +274,4 @@
 	    });
 	});
 </script>
+</html>

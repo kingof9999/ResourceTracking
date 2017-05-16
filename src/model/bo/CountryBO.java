@@ -1,6 +1,5 @@
 package model.bo;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import model.bean.Country;
@@ -28,24 +27,27 @@ public class CountryBO {
 	/**
 	 * Processing business get list country
 	 * @return
+	 * @throws Exception 
 	 */
-	public ArrayList<Country> getListCountry() throws SQLException {
+	public ArrayList<Country> getListCountry() throws Exception {
 		return countryDAO.getListCountry();
 	}
 
 	/**
 	 * Processing business get list year
 	 * @return
+	 * @throws Exception 
 	 */
-	public ArrayList<Year> getListYear() throws SQLException {
+	public ArrayList<Year> getListYear() throws Exception {
 		return countryDAO.getListYear();
 	}
 	
 	/**
 	 * Processing business check idCountry
 	 * @return
+	 * @throws Exception 
 	 */
-	public boolean checkIdCountry(String idCountry) {
+	public boolean checkIdCountry(String idCountry) throws Exception {
 		return countryDAO.checkIdCountry(idCountry);
 	}
 

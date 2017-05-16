@@ -1,3 +1,17 @@
+<!-- 
+	* addPHCM.jsp
+	*
+	* version 1.4
+	*
+	* Date: 26/04/2017
+ 	*
+ 	* Copyright
+ 	* 
+ 	* Modification Logs:
+ 	* DATE				AUTHOR			DECRIPTION
+ 	* -------------------------------------------
+ 	* 08/05/2017		TinLQ			Create
+ -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
@@ -18,16 +32,8 @@
 	rel="stylesheet">
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/myStyle.css" />
-<script src="js/jquery.min.js"></script>
-<!-- <script
-	src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script
-	src="http://cdn.datatables.net/responsive/1.0.1/js/dataTables.responsive.min.js"></script>
-<script
-	src="http://cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js"></script> -->
-
-	<!-- TABLE STYLES-->
-    <link href="js/dataTables/dataTables.bootstrap.css" rel="stylesheet" />
+<!-- TABLE STYLES-->
+<link href="js/dataTables/dataTables.bootstrap.css" rel="stylesheet" />
 </head>
 <body>
 	<div class="container">
@@ -67,20 +73,24 @@
 				</a>
 				<span>Add Public Holiday Calendars...</span>
 			</div>
-			<div style="height: 400px;" class="body-filter row">
+			<div class="body-filter row">
 				<div class="col-sm-12">
-					<span style="color: red;"><bean:write name="publicHolidayForm" property="message"/></span>
 					<div class="col-sm-12" style="border: groove; margin-top: 30px;">
 						<html:form action="/addPublicHoliday" method="post">
 							<div style="margin-top: 10px;">
 								Country:
-								<html:select property="idCountry" style="margin-left: 30px;">
+								<html:select property="idCountry" style="margin-left: 30px;" styleId="country">
 									<html:optionsCollection name="publicHolidayForm" property="listCountry" 
 										label="nameCountry" value="idCountry" />
 								</html:select>
+								<span style="color: red;"><html:errors property="addCountryExistError"/></span>
 							</div>
 							<div style="margin-top: 10px;">
-								Date of Public Holiday(dd/mm/yyyy):<br>
+								Date of Public Holiday(dd/mm/yyyy)<span style="color: red;">(*)</span>: <span style="color: red;">
+								<html:errors property="addNullError"/>
+								<html:errors property="addTypeError"/>
+								<html:errors property="addExistDateError"/>
+								</span><br>
 								<div style="margin-left: 170px;" id="dateCheckBox">
 								
 								</div>
@@ -90,8 +100,8 @@
 							</div>
 							<div style="margin-left: 100px;">
 								<button class="btn btn-default" id="remove">Clear</button>
-								<html:submit styleId="submit" styleClass="btn btn btn-info" property="submit" value="Add">Add</html:submit>
-								<html:link styleClass="btn btn-danger" action="/list-public-holiday">Cancel</html:link>
+								<html:submit styleId="submit" styleClass="btn btn-default" property="submit" value="Add">Add</html:submit>
+								<html:link styleClass="btn btn-default" action="/list-public-holiday">Cancel</html:link>
 							</div>
 							<br>
 						</html:form>
@@ -104,7 +114,17 @@
 		</div>
 	</div>
 </body>
-</html>
+<!-- script -->
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript">
+	$("#country").focus();
+	
+	$('body').keydown(function(e) {
+	    if (e.keyCode == 27) {
+	        $('#remove').click();
+	    }    
+	});
+</script>
 <script type="text/javascript">
 	function deleteFunction(iCnt) {
 	    var r = confirm("Are you sure you want to delete this record?");
@@ -150,3 +170,24 @@
 
 	});
 </script>
+
+<script type="text/javascript">
+	$('body').on('keydown', 'input, select, textarea', function(e) {
+	    var self = $(this)
+	      , form = self.parents('form:eq(0)')
+	      , focusable
+	      , next
+	      ;
+	    if (e.keyCode == 13) {
+	        focusable = form.find('input,a,select,button,textarea').filter(':visible');
+	        next = focusable.eq(focusable.index(this)+1);
+	        if (next.length) {
+	            next.focus();
+	        } else {
+	            form.submit();
+	        }
+	        return false;
+	    }
+	});
+</script>
+</html>
